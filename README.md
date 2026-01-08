@@ -67,27 +67,6 @@ Visualization	Chart.js
 Voice	Web Speech API
 Data	Heart Disease Clinical Dataset
 
-📂 Project Structure
-AI-Heart-Disease-Prediction-System/
-│
-├── app.py
-├── heart_model.pkl
-├── templates/
-│   ├── overview.html
-│   ├── decision.html
-│   └── reports.html
-│
-├── static/
-│   ├── css/
-│   │   └── style.css
-│   ├── js/
-│   │   └── charts.js
-│   └── images/
-│       └── heart.png
-│
-├── requirements.txt
-└── README.md
-
 ▶️ How to Run
 pip install -r requirements.txt
 python app.py
