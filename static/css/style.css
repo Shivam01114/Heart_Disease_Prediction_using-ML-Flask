@@ -1,0 +1,224 @@
+/* ========== GLOBAL RESET ========== */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, sans-serif;
+}
+
+body{
+    background:#050505;
+    color:#eee;
+}
+
+/* ========== DASHBOARD LAYOUT ========== */
+.dashboard{
+    display:flex;
+    min-height:100vh;
+    position:relative; /* important for bg heart */
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar{
+    width:250px;
+    padding:25px;
+    background:rgba(11,11,11,0.88); /* translucent */
+    border-right:1px solid rgba(255,47,69,.4);
+    position:relative;
+    z-index:2;
+}
+
+.sidebar h2{
+    color:#ffd84d;
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.sidebar ul{
+    list-style:none;
+}
+
+.sidebar ul li{
+    padding:14px;
+    margin-bottom:10px;
+    cursor:pointer;
+    border-radius:10px;
+    transition:.3s;
+}
+
+.sidebar ul li:hover{
+    background:rgba(255,47,69,.25);
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content{
+    flex:1;
+    padding:35px;
+    background:rgba(5,5,5,0.88); /* translucent so bg shows */
+    position:relative;
+    z-index:2;
+}
+
+/* ========== INFO BOX ========== */
+.info-box{
+    background:#120006;
+    padding:25px;
+    border-radius:18px;
+    margin-bottom:25px;
+    border:1px solid rgba(255,47,69,.4);
+    box-shadow:0 0 25px rgba(255,47,69,.3);
+}
+
+/* ========== CYBER SCAN EFFECT ========== */
+.cyber{
+    position:relative;
+    overflow:hidden;
+}
+
+.scan-line{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        transparent,
+        rgba(255,47,69,.4),
+        transparent
+    );
+    animation:scan 2.5s linear infinite;
+}
+
+@keyframes scan{
+    from{transform:translateY(-100%)}
+    to{transform:translateY(100%)}
+}
+
+/* ========== ROBOT ZONE ========== */
+.robot-zone{
+    text-align:center;
+}
+
+.robot-zone lottie-player{
+    width:180px;
+    height:180px;
+    margin:auto;
+}
+
+/* ========== ECG ========== */
+.ecg-box{
+    height:80px;
+    background:black;
+    border:1px solid red;
+    overflow:hidden;
+    margin-top:15px;
+}
+
+.ecg-line{
+    width:200%;
+    height:100%;
+    background:linear-gradient(90deg,transparent,red,transparent);
+    animation:ecgMove 1s linear infinite;
+}
+
+@keyframes ecgMove{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+}
+
+/* ========== BUTTONS ========== */
+button{
+    padding:14px 30px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    background:linear-gradient(90deg,#ff2f45,#ffd84d);
+    color:black;
+    font-weight:bold;
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 20px rgba(255,216,77,.6);
+}
+
+/* ========== FORM GRID ========== */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.form-grid input{
+    padding:12px;
+    background:#0f0f0f;
+    border:none;
+    color:#fff;
+    border-radius:10px;
+}
+
+/* =====================================================
+   ❤️ REAL 3D HEART BACKGROUND (FINAL & VISIBLE)
+   ===================================================== */
+.heart-bg{
+    position:absolute;          /* inside dashboard */
+    right:-40px;
+    top:50%;
+    width:520px;
+    transform:
+        translateY(-50%)
+        rotateY(38deg)
+        rotateZ(-12deg)
+        perspective(900px);
+    opacity:0.30;               /* visible */
+    z-index:1;                  /* behind panels */
+    pointer-events:none;
+    filter:
+        drop-shadow(0 0 90px rgba(255,0,0,0.75))
+        saturate(1.2);
+    animation:heartFloat 16s ease-in-out infinite alternate;
+}
+
+/* subtle floating 3D motion */
+@keyframes heartFloat{
+    0%{
+        transform:
+            translateY(-50%)
+            rotateY(28deg)
+            rotateZ(-10deg)
+            scale(1);
+    }
+    100%{
+        transform:
+            translateY(-56%)
+            rotateY(50deg)
+            rotateZ(-14deg)
+            scale(1.06);
+    }
+}
+.brand-title{
+    text-align:center;
+    color:#ffd84d;
+    font-size:22px;
+    line-height:1.2;
+}
+
+.brand-title span{
+    display:block;
+    font-size:12px;
+    font-weight:400;
+    color:#ff6b6b;
+    margin-top:4px;
+    letter-spacing:1px;
+}
+.page-title{
+    font-size:28px;
+    color:#fff;
+    margin-bottom:25px;
+}
+
+.page-title span{
+    display:block;
+    font-size:14px;
+    color:#aaa;
+    margin-top:6px;
+}
+

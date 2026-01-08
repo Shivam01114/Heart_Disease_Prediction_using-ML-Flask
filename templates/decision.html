@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>🧠 AI Clinical Decision | CardioSense AI</title>
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- ❤️ Background Heart -->
+    <img src="{{ url_for('static', filename='images/heart.png') }}"
+         class="heart-bg" alt="Heart">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2 class="brand-title">
+            CardioSense AI
+            <span>Intelligent Heart Risk System</span>
+        </h2>
+        <ul>
+            <li onclick="location.href='/'">Overview</li>
+            <li class="active">AI Decision</li>
+            <li onclick="location.href='/reports'">Reports</li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <h1 class="page-title">
+            📊 AI Decision Summary
+            <span>Visual Analysis • Clinical Explanation</span>
+        </h1>
+
+        {% if patient and patient.Result %}
+
+        <!-- RESULT -->
+        <div class="info-box">
+            <h3>{{ patient.Result }}</h3>
+            <p><strong>Estimated Risk:</strong> {{ patient.Risk }}</p>
+        </div>
+
+        <!-- CHART -->
+        <div class="info-box">
+            <h3>📊 Visual Analysis of 13 Clinical Parameters</h3>
+            <canvas id="vitalsChart" height="160"></canvas>
+        </div>
+
+        <!-- PARAMETER SUMMARY -->
+        <div class="info-box">
+            <h3>🩺 Parameter-wise Summary</h3>
+            <p><strong>Age:</strong> {{ patient.Age }} years</p>
+            <p><strong>Chest Pain:</strong> {{ patient["Chest Pain"] }}</p>
+            <p><strong>Blood Pressure:</strong> {{ patient["Resting BP"] }} mmHg</p>
+            <p><strong>Cholesterol:</strong> {{ patient.Cholesterol }} mg/dl</p>
+            <p><strong>Fasting Sugar:</strong> {{ patient["Fasting Sugar"] }}</p>
+            <p><strong>ECG:</strong> {{ patient["Rest ECG"] }}</p>
+            <p><strong>Max Heart Rate:</strong> {{ patient["Max Heart Rate"] }}</p>
+            <p><strong>Exercise Angina:</strong> {{ patient["Exercise Angina"] }}</p>
+            <p><strong>Oldpeak:</strong> {{ patient.Oldpeak }}</p>
+            <p><strong>Slope:</strong> {{ patient.Slope }}</p>
+            <p><strong>CA:</strong> {{ patient.CA }}</p>
+            <p><strong>Thal:</strong> {{ patient.Thal }}</p>
+        </div>
+
+        <!-- AI DOCTOR -->
+        <div class="info-box">
+            <h3>🎙️ AI Doctor Explanation</h3>
+
+            <label style="font-size:13px">
+                Language:
+                <select id="langSelect">
+                    <option value="hi">Hindi</option>
+                    <option value="en">English</option>
+                </select>
+            </label>
+            <br><br>
+            <button onclick="doctorSpeak()">🩺 Start Doctor Explanation</button>
+        </div>
+
+        {% else %}
+        <p>No patient data available.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ================= JS ================= -->
+<script src="/static/js/charts.js"></script>
+
+<script>
+/* ================= CHART ================= */
+document.addEventListener("DOMContentLoaded",()=>{
+    if(typeof initChart==="function") initChart();
+    if(typeof updateChartFromInputs==="function"){
+        updateChartFromInputs([
+            {{ patient.Age }},
+            {{ patient["Chest Pain"] }},
+            {{ patient["Resting BP"] }},
+            {{ patient.Cholesterol }},
+            {{ patient["Fasting Sugar"] }},
+            {{ patient["Rest ECG"] }},
+            {{ patient["Max Heart Rate"] }},
+            {{ patient["Exercise Angina"] }},
+            {{ patient.Oldpeak }},
+            {{ patient.Slope }},
+            {{ patient.CA }},
+            {{ patient.Thal }},
+            1
+        ]);
+    }
+});
+
+/* ================= AI DOCTOR (13 PARAMETERS) ================= */
+let voices = [];
+speechSynthesis.onvoiceschanged = () => {
+    voices = speechSynthesis.getVoices();
+};
+
+function doctorSpeak(){
+
+    speechSynthesis.cancel();
+    let lang = document.getElementById("langSelect").value;
+    let msg = "", voice = null;
+
+    /* ======================= HINDI ======================= */
+    if(lang === "hi"){
+        msg += "Main aapko ek doctor ke roop mein aapki heart report samjha raha hoon, jaise OPD mein patient ko samjhaya jaata hai. Dhyaan se suniye. ";
+
+        /* AGE */
+        msg += "Sabse pehle age ki baat karte hain. Age ek important factor hota hai kyunki jaise jaise umar badhti hai, heart ki blood vessels dheere dheere kamzor hoti jaati hain. ";
+        msg += "Aapki age {{ patient.Age }} saal hai. ";
+        {% if patient.Age >= 55 %}
+        msg += "Is umar mein Dil ki beemari ka risk kaafi zyada hota hai, isliye extra care ki zarurat hoti hai. ";
+        {% elif patient.Age >= 40 %}
+        msg += "Is umar mein lifestyle heart health par kaafi asar daalta hai. ";
+        {% else %}
+        msg += "Is umar mein Dil ki beemari ka risk normally kam hota hai. ";
+        {% endif %}
+
+        /* CHEST PAIN */
+        msg += "Ab chest pain ki baat karte hain. Chest pain ka matlab hota hai seene mein discomfort, jo kabhi kabhi dil se related hota hai. ";
+        msg += "Aapki chest pain value {{ patient['Chest Pain'] }} hai. ";
+        {% if patient["Chest Pain"] >= 2 %}
+        msg += "Is type ka chest pain dil se related ho sakta hai, isliye ise lightly nahi lena chahiye. ";
+        {% else %}
+        msg += "Is type ka chest pain zyada dangerous category mein nahi aata. ";
+        {% endif %}
+
+        /* BLOOD PRESSURE */
+        msg += "Blood pressure dil par dabaao ko dikhata hai. Zyada blood pressure ka matlab hota hai dil ko jyada mehnat karni par rahi hai. ";
+        msg += "Aapka blood pressure {{ patient['Resting BP'] }} hai. ";
+        {% if patient["Resting BP"] >= 140 %}
+        msg += "Ye high blood pressure hai, jo heart attack aur stroke ka risk badhata hai. Namak kam karna aur daily walk zaroori hai. ";
+        {% elif patient["Resting BP"] >= 120 %}
+        msg += "Ye thoda badha hua hai, ise control karna zaroori hai. ";
+        {% else %}
+        msg += "Ye blood pressure bilkul normal range mein hai. ";
+        {% endif %}
+
+        /* CHOLESTEROL */
+        msg += "Cholesterol blood mein jama hone wali charbi hoti hai. Zyada cholesterol arteries ko block kar sakta hai. ";
+        msg += "Aapka cholesterol {{ patient.Cholesterol }} hai. ";
+        {% if patient.Cholesterol >= 240 %}
+        msg += "Ye high cholesterol hai, jo dil ke liye dangerous ho sakta hai. Fried aur oily food kam karein. ";
+        {% elif patient.Cholesterol >= 200 %}
+        msg += "Ye borderline cholesterol hai, dhyaan dena zaroori hai. ";
+        {% else %}
+        msg += "Ye cholesterol healthy range mein hai. ";
+        {% endif %}
+
+        /* FASTING SUGAR */
+        msg += "Fasting sugar diabetes se judi hoti hai. High sugar dil ki beemari ka risk badha deti hai. ";
+        msg += "Aapki fasting sugar value {{ patient['Fasting Sugar'] }} hai. ";
+        {% if patient["Fasting Sugar"] == 1 %}
+        msg += "Sugar level badha hua hai, ise control karna zaroori hai. ";
+        {% else %}
+        msg += "Sugar level normal hai. ";
+        {% endif %}
+
+        /* ECG */
+        msg += "ECG ek test hota hai jo heart ki electrical activity ko check karta hai. Isse pata chalta hai ki dil sahi rhythm mein kaam kar raha hai ya nahi. ";
+        msg += "Aapka ECG result {{ patient['Rest ECG'] }} hai. ";
+        {% if patient["Rest ECG"] == 2 %}
+        msg += "ECG abnormal hai, jo dil ka stress ya problem dikhata hai. ";
+        {% elif patient["Rest ECG"] == 1 %}
+        msg += "ECG mein thode changes dikh rahe hain, monitoring zaroori hai. ";
+        {% else %}
+        msg += "ECG bilkul normal hai. ";
+        {% endif %}
+
+        /* MAX HEART RATE */
+        msg += "Maximum heart rate ye dikhata hai ki exercise ke time aapka Dil kitna achha response deta hai. ";
+        msg += "Aapka maximum heart rate {{ patient['Max Heart Rate'] }} hai. ";
+        {% if patient["Max Heart Rate"] < 120 %}
+        msg += "Exercise tolerance thodi kam hai. ";
+        {% else %}
+        msg += "Exercise tolerance theek hai. ";
+        {% endif %}
+
+        /* EXERCISE ANGINA */
+        msg += "Exercise angina ka matlab hota hai exercise ke dauran seene mein dard hona. ";
+        msg += "Aapki exercise angina value {{ patient['Exercise Angina'] }} hai. ";
+        {% if patient["Exercise Angina"] == 1 %}
+        msg += "Exercise ke dauran dard hona ek warning sign hota hai. ";
+        {% else %}
+        msg += "Exercise ke dauran koi dard nahi hua, jo ek achha sign hai. ";
+        {% endif %}
+
+        /* OLDPEAK */
+        msg += "Oldpeak ECG ka ek part hota hai jo Dil par stress ko show karta hai. ";
+        msg += "Aapka oldpeak {{ patient.Oldpeak }} hai. ";
+        {% if patient.Oldpeak >= 2 %}
+        msg += "Heart stress zyada dikh raha hai. ";
+        {% else %}
+        msg += "Heart stress control mein hai. ";
+        {% endif %}
+
+        /* CA */
+        msg += "CA ka matlab hota hai heart ki kitni blood vessels affected hain. ";
+        msg += "Aapki CA value {{ patient.CA }} hai. ";
+        {% if patient.CA > 0 %}
+        msg += "Kuch blood vessels mein blockage ke sanket milte hain. ";
+        {% else %}
+        msg += "Major blood vessels clear lag rahi hain. ";
+        {% endif %}
+
+        /* THAL */
+        msg += "Thal Dil ke blood flow ko dikhata hai. ";
+        msg += "Aapka thal value {{ patient.Thal }} hai. ";
+        {% if patient.Thal > 2 %}
+        msg += "Blood flow mein problem ho sakti hai. ";
+        {% else %}
+        msg += "Blood flow normal lag raha hai. ";
+        {% endif %}
+
+        msg += "Overall, Aapke dil ko healthy rakhne ke liye balanced diet, regular exercise, stress control aur time to time doctor se checkup bahut zaroori hai. ";
+        msg += "Ye AI explanation sirf madad ke liye hai, final medical decision best or ache se ache doctor se consult krke le. ";
+
+        voice = voices.find(v => v.lang.startsWith("hi"));
+    }
+
+    /* ======================= ENGLISH ======================= */
+    else {
+        msg += "I am explaining your heart health report as a doctor would explain it during a clinical consultation. Please listen carefully. ";
+
+        msg += "Age is an important factor because the risk of heart disease increases as blood vessels age. ";
+        msg += "Your age is {{ patient.Age }} years. ";
+        {% if patient.Age >= 55 %}
+        msg += "At this age, cardiovascular risk is significantly higher. ";
+        {% elif patient.Age >= 40 %}
+        msg += "At this age, lifestyle plays a major role in heart health. ";
+        {% else %}
+        msg += "At this age, baseline cardiac risk is relatively low. ";
+        {% endif %}
+
+        msg += "Chest pain refers to discomfort in the chest and may sometimes be related to the heart. ";
+        msg += "Your chest pain value is {{ patient['Chest Pain'] }}. ";
+        {% if patient["Chest Pain"] >= 2 %}
+        msg += "This type of chest pain may indicate cardiac involvement and should not be ignored. ";
+        {% else %}
+        msg += "This type of chest pain is less likely to be cardiac. ";
+        {% endif %}
+
+        msg += "Blood pressure reflects the force with which blood flows through your arteries. ";
+        msg += "Your blood pressure is {{ patient['Resting BP'] }}. ";
+        {% if patient["Resting BP"] >= 140 %}
+        msg += "This is high blood pressure and increases the risk of heart attack and stroke. ";
+        {% elif patient["Resting BP"] >= 120 %}
+        msg += "This is borderline high blood pressure. ";
+        {% else %}
+        msg += "This blood pressure is within the normal range. ";
+        {% endif %}
+
+        msg += "Cholesterol is a fatty substance in the blood that can block arteries. ";
+        msg += "Your cholesterol level is {{ patient.Cholesterol }}. ";
+        {% if patient.Cholesterol >= 240 %}
+        msg += "This is high cholesterol and requires dietary control. ";
+        {% elif patient.Cholesterol >= 200 %}
+        msg += "This is borderline cholesterol. ";
+        {% else %}
+        msg += "This cholesterol level is healthy. ";
+        {% endif %}
+
+        msg += "Fasting blood sugar reflects diabetes-related risk. ";
+        msg += "Your fasting sugar value is {{ patient['Fasting Sugar'] }}. ";
+        {% if patient["Fasting Sugar"] == 1 %}
+        msg += "Elevated sugar increases cardiovascular risk. ";
+        {% else %}
+        msg += "Blood sugar is normal. ";
+        {% endif %}
+
+        msg += "ECG measures the electrical activity of the heart and helps detect rhythm abnormalities. ";
+        msg += "Your ECG result is {{ patient['Rest ECG'] }}. ";
+        {% if patient["Rest ECG"] == 2 %}
+        msg += "This ECG shows abnormal findings. ";
+        {% elif patient["Rest ECG"] == 1 %}
+        msg += "This ECG shows mild changes. ";
+        {% else %}
+        msg += "This ECG result is normal. ";
+        {% endif %}
+
+        msg += "Maximum heart rate indicates how well the heart responds to physical activity. ";
+        msg += "Your maximum heart rate is {{ patient['Max Heart Rate'] }}. ";
+        {% if patient["Max Heart Rate"] < 120 %}
+        msg += "This suggests reduced exercise tolerance. ";
+        {% else %}
+        msg += "This indicates adequate exercise tolerance. ";
+        {% endif %}
+
+        msg += "Exercise angina refers to chest pain during physical exertion. ";
+        msg += "Your exercise angina value is {{ patient['Exercise Angina'] }}. ";
+        {% if patient["Exercise Angina"] == 1 %}
+        msg += "Chest pain during exercise is a warning sign. ";
+        {% else %}
+        msg += "No chest pain during exercise is reassuring. ";
+        {% endif %}
+
+        msg += "Oldpeak represents stress-induced changes on ECG. ";
+        msg += "Your oldpeak value is {{ patient.Oldpeak }}. ";
+        {% if patient.Oldpeak >= 2 %}
+        msg += "This indicates significant cardiac stress. ";
+        {% else %}
+        msg += "This indicates acceptable cardiac stress response. ";
+        {% endif %}
+
+        msg += "CA indicates the number of major vessels affected. ";
+        msg += "Your CA value is {{ patient.CA }}. ";
+        {% if patient.CA > 0 %}
+        msg += "This suggests possible coronary vessel blockage. ";
+        {% else %}
+        msg += "No major vessel blockage is detected. ";
+        {% endif %}
+
+        msg += "Thal reflects blood flow to the heart muscle. ";
+        msg += "Your thal value is {{ patient.Thal }}. ";
+        {% if patient.Thal > 2 %}
+        msg += "This suggests abnormal blood flow. ";
+        {% else %}
+        msg += "Blood flow appears normal. ";
+        {% endif %}
+
+        msg += "Overall, maintaining a healthy lifestyle, regular exercise, stress management, and medical follow-up are strongly advised. ";
+        msg += "This AI explanation is for assistance only and does not replace professional medical advice. ";
+
+        voice = voices.find(v => v.lang.startsWith("en"));
+    }
+
+    let speech = new SpeechSynthesisUtterance(msg);
+    speech.voice = voice || null;
+    speech.lang = lang === "hi" ? "hi-IN" : "en-US";
+    speech.rate = 0.92;
+
+    speechSynthesis.speak(speech);
+}
+</script>
+
+
+</body>
+</html>

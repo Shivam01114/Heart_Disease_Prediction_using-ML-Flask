@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI Heart Dashboard</title>
+<link rel="stylesheet" href="/static/css/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="dashboard">
+
+<div class="sidebar">
+<h2 class="brand-title">
+🧠 CardioSense AI
+<span>Smart Heart Intelligence</span>
+</h2>
+
+<ul>
+<li class="active">Overview</li>
+<li onclick="location.href='/decision'">AI Decision</li>
+<li onclick="location.href='/reports'">Reports</li>
+</ul>
+</div>
+
+<div class="main-content">
+<h1 class="page-title">
+❤️ Patient Cardiac Health Analysis
+<span>AI-Driven Risk Evaluation & Insights</span>
+</h1>
+
+
+<!-- INPUT FORM (SAME IDS) -->
+<div class="form-grid">
+<input id="age" placeholder="Age">
+<input id="sex" placeholder="Sex (1=Male,0=Female)">
+<input id="cp" placeholder="Chest Pain (0–3)">
+<input id="trestbps" placeholder="Blood Pressure">
+<input id="chol" placeholder="Cholesterol">
+<input id="fbs" placeholder="Sugar (1/0)">
+<input id="restecg" placeholder="ECG (0–2)">
+<input id="thalach" placeholder="Max Heart Rate">
+<input id="exang" placeholder="Angina (1/0)">
+<input id="oldpeak" placeholder="Oldpeak">
+<input id="slope" placeholder="Slope (0–2)">
+<input id="ca" placeholder="CA (0–4)">
+<input id="thal" placeholder="Thal (1–3)">
+</div>
+
+<div class="buttons">
+<button onclick="fillDemo()">Demo</button>
+<button onclick="resetForm()">Reset</button>
+<button onclick="predict()">Analyze</button>
+</div>
+
+<div class="meter-bg"><div id="riskFill"></div></div>
+<p id="riskText"></p>
+<h2 id="result"></h2>
+
+<!-- 🔹 CHART -->
+<div class="info-box">
+<h3>📊 Key Clinical Parameters</h3>
+<canvas id="vitalsChart" height="120"></canvas>
+</div>
+
+</div>
+</div>
+
+<script src="/static/js/script.js"></script>
+<script src="/static/js/charts.js"></script>
+<script>initChart();</script>
+
+</body>
+</html>

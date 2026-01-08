@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Reports</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<div class="sidebar">
+<h2 class="brand-title">
+🧠 CardioSense AI
+<span>Overall Heart Health Report</span>
+</h2>
+
+<ul>
+<li onclick="location.href='/'">Overview</li>
+<li onclick="location.href='/decision'">AI Decision</li>
+<li class="active">Reports</li>
+</ul>
+</div>
+
+<div class="main-content">
+<h1 class="page-title">
+📄 Comprehensive Heart Health Report
+<span>Diagnosis • Lifestyle • Preventive Guidance</span>
+</h1>
+
+{% if patient and patient.Result %}
+
+<div class="info-box">
+<ul>
+{% for k,v in patient.items() %}
+<li><strong>{{ k }}:</strong> {{ v }}</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="info-box">
+<h3>🥗 Diet Recommendations</h3>
+<ul>
+<li>Eat fruits, vegetables, oats, nuts</li>
+<li>Avoid fried food, excess salt, sugar</li>
+<li>Drink adequate water</li>
+</ul>
+</div>
+
+<div class="info-box">
+<h3>🏃 Lifestyle & Exercise</h3>
+<ul>
+<li>30 minutes brisk walk daily</li>
+<li>Breathing exercises & yoga</li>
+<li>No smoking or alcohol</li>
+<li>Regular BP & cholesterol check</li>
+</ul>
+</div>
+
+<button class="pdf-btn" onclick="window.location.href='/download_report'">
+Download PDF Report
+</button>
+
+{% else %}
+<p>No report available.</p>
+{% endif %}
+
+</div>
+</div>
+
+</body>
+</html>
